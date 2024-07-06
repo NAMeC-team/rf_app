@@ -45,6 +45,16 @@ class RF_app {
     void attach_rx_callback(
         Callback<void(uint8_t *packet, size_t length)> rx_callback);
 
+    /**
+     * Set a new callback function to call once transmission
+     * data has been sent
+     */
+    void attach_tx_ds_callback(
+        Callback<void()> tx_ds_callback);
+
+    /**
+     * Reads the oldest packet loaded in the antenna's RX data fifo
+     */
     void get_rx_packet();
 
    protected:

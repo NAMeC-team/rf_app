@@ -13,7 +13,7 @@ RF_app::RF_app(NRF24L01 *device,
                uint16_t frequency,
                uint8_t *Tx_addr,
                uint8_t packet_size)
-    : _device(device) {
+    : _device(device), _mode(rf_mode) {
     setup(rf_mode, interrupt_mode, frequency, Tx_addr, packet_size);
 }
 
@@ -109,6 +109,15 @@ void RF_app::attach_rx_callback(
     _rx_callback = rx_callback;
 }
 
+void RF_app::attach_tx_ds_callback(
+    Callback<void()> tx_ds_callback) {
+    _tx_ds_callback = tx_ds_callback;
+}
+
 void RF_app::_rf_callback(void) {
-    _event_queue.call(callback(this, &RF_app::get_rx_packet));
+    if (_mode == RFAppMode::RX)
+        _event_queue.call(callback(this, &RF_app::get_rx_packet));
+    else {
+        _event_queue.call(&_tx_ds_callback);
+    }
 }
