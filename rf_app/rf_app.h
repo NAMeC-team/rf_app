@@ -72,7 +72,7 @@ class RF_app {
     RFAppMode _mode;
 
     /**
-     * Underlying library for the NRF24L01 module
+     * Underlying library object for the NRF24L01 module
      */
     NRF24L01 *_device;
 
@@ -89,12 +89,14 @@ class RF_app {
     /**
      * Callback that is called once a packet has been
      * received by the antenna (RX_DR asserted)
+     * This function is not called directly, a packet is read first
+     * then we call it using the newly read packet
      */
     Callback<void(uint8_t *packet, size_t length)> _rx_callback;
 
     /**
      * Callback that is called once data has been transmitted
-     * by the antenna (TX_DS asserted)
+     * by the antenna (TX_DS asserted). The function gets called directly
      */
     Callback<void()> _tx_ds_callback;
 
