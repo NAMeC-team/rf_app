@@ -7,21 +7,37 @@ namespace {
 #define RF_FREQ_MIN 2400
 }  // namespace
 
-RF_app::RF_app(NRF24L01 *device, RFAppMode rf_mode, uint16_t frequency,
-               uint8_t *Tx_addr, uint8_t packet_size)
+RF_app::RF_app(NRF24L01 *device,
+               RFAppInterrupt interrupt_mode,
+               RFAppMode rf_mode,
+               uint16_t frequency,
+               uint8_t *Tx_addr,
+               uint8_t packet_size)
     : _device(device) {
-    setup(rf_mode, frequency, Tx_addr, packet_size);
+    setup(rf_mode, interrupt_mode, frequency, Tx_addr, packet_size);
 }
 
-void RF_app::setup(RFAppMode rf_mode, uint16_t frequency, uint8_t *Tx_addr,
+void RF_app::setup(RFAppMode rf_mode,
+                   RFAppInterrupt interrupt_mode,
+                   uint16_t frequency,
+                   uint8_t *Tx_addr,
                    uint8_t packet_size) {
+
+    NRF24L01::InterruptMode interrupts = NRF24L01::InterruptMode::NONE;
+    if (interrupt_mode == RFAppInterrupt::on_RX)
+        interrupts = NRF24L01::InterruptMode::RX_ONLY;
+    else if (interrupt_mode == RFAppInterrupt::on_TX)
+        interrupts = NRF24L01::InterruptMode::TX_ONLY;
+    else if (interrupt_mode == RFAppInterrupt::on_RX_TX)
+        interrupts = NRF24L01::InterruptMode::RX_TX;
+
     switch (rf_mode) {
         case RFAppMode::RX:
             _device->initialize(NRF24L01::OperationMode::RECEIVER,
                                 NRF24L01::DataRate::_2MBPS, frequency);
             _device->attach_receive_payload(NRF24L01::RxAddressPipe::RX_ADDR_P0,
                                             Tx_addr, packet_size);
-            _device->set_interrupt(NRF24L01::InterruptMode::RX_ONLY);
+            _device->set_interrupt(interrupts);
             _device->attach(callback(this, &RF_app::_rf_callback));
             _device->start_listening();
             break;
@@ -31,7 +47,7 @@ void RF_app::setup(RFAppMode rf_mode, uint16_t frequency, uint8_t *Tx_addr,
                                 NRF24L01::DataRate::_2MBPS, frequency);
             _device->attach_transmitting_payload(
                 NRF24L01::RxAddressPipe::RX_ADDR_P0, Tx_addr, packet_size);
-            _device->set_interrupt(NRF24L01::InterruptMode::TX_ONLY);
+            _device->set_interrupt(interrupts);
             _device->attach(callback(this, &RF_app::_rf_callback));
             break;
     }

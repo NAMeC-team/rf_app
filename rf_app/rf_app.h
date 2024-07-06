@@ -16,11 +16,8 @@ class RF_app {
 
     // virtual ~RF_app();
 
-    void setup(RFAppMode rf_mode, RFAppInterrupt enable_interrupt,
+    void setup(RFAppMode rf_mode,RFAppInterrupt enable_interrupt,
                uint16_t frequency, uint8_t *Tx_addr, uint8_t packet_size);
-
-    void setup(RFAppMode rf_mode, uint16_t frequency, uint8_t *Tx_addr,
-               uint8_t packet_size);
 
     void run(void);
 
