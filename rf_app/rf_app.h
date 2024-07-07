@@ -57,7 +57,17 @@ class RF_app {
      */
     void get_rx_packet();
 
-   protected:
+    /**
+     * Assumes that TX mode has transmitted at least one packet
+     *
+     * Can be used as a TX_DS (Transmission Data Sent) callback,
+     * sets CE=0 to switch to Standby-1 mode,
+     * then sets PRIM_RX=1 and CE=1, and waits 130μs to
+     * get into RX mode. Maintains CE=1 when finished
+     */
+    void switch_to_rx(void);
+
+protected:
     void _process(void);
 
     /**
@@ -66,21 +76,7 @@ class RF_app {
      */
     void _rf_callback(void);
 
-    /**
-     * Used as a TX_DS (Transmission Data Sent) callback,
-     * sets CE=0 to switch to Standby-1 mode,
-     * then sets PRIM_RX=1 and CE=1, and waits 130μs to
-     * get into RX mode. Maintains CE=1 when finished
-     */
-    void _switch_to_rx(void);
-
    private:
-
-    /**
-     * Current mode of the antenna
-     */
-    RFAppMode _mode;
-
     /**
      * Underlying library object for the NRF24L01 module
      */

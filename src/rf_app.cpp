@@ -100,6 +100,14 @@ void RF_app::print_setup() {
     printf("Status : 0x%02X\n", (int)_device->status_register());
 }
 
+void RF_app::switch_to_rx() {
+    if (_device->mode() == OperatioMode::RECEIVER) return;
+    _device->set_mode(OperationMode::RECEIVER); // sets PRIM_RX=1
+    _device->set_com_ce(0); // switch to Standby-I
+    wait_us(20);
+    _device->set_com_ce(1); // switch to RX Settling then RX Mode
+}
+
 /*__________________________
 
          Callback
@@ -115,7 +123,7 @@ void RF_app::attach_tx_ds_callback(
 }
 
 void RF_app::_rf_callback(void) {
-    if (_mode == RFAppMode::RX)
+    if (_device->mode() == OperationMode::RECEIVER)
         _event_queue.call(callback(this, &RF_app::get_rx_packet));
     else {
         _event_queue.call(&_tx_ds_callback);
