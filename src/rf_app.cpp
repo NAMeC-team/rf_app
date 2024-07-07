@@ -13,7 +13,7 @@ RF_app::RF_app(NRF24L01 *device,
                uint16_t frequency,
                uint8_t *Tx_addr,
                uint8_t packet_size)
-    : _device(device), _mode(rf_mode) {
+        : _device(device) {
     setup(rf_mode, interrupt_mode, frequency, Tx_addr, packet_size);
 }
 
@@ -101,8 +101,8 @@ void RF_app::print_setup() {
 }
 
 void RF_app::switch_to_rx() {
-    if (_device->mode() == OperatioMode::RECEIVER) return;
-    _device->set_mode(OperationMode::RECEIVER); // sets PRIM_RX=1
+    if (_device->mode() == NRF24L01::OperationMode::RECEIVER) return;
+    _device->set_mode(NRF24L01::OperationMode::RECEIVER); // sets PRIM_RX=1
     _device->set_com_ce(0); // switch to Standby-I
     wait_us(20);
     _device->set_com_ce(1); // switch to RX Settling then RX Mode
@@ -123,9 +123,9 @@ void RF_app::attach_tx_ds_callback(
 }
 
 void RF_app::_rf_callback(void) {
-    if (_device->mode() == OperationMode::RECEIVER)
+    if (_device->mode() == NRF24L01::OperationMode::RECEIVER)
         _event_queue.call(callback(this, &RF_app::get_rx_packet));
     else {
-        _event_queue.call(&_tx_ds_callback);
+        _event_queue.call(_tx_ds_callback);
     }
 }

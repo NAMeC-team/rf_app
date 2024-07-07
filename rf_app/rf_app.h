@@ -17,13 +17,16 @@ class RF_app {
      */
     enum class RFAppInterrupt : uint8_t { on_RX = 0, on_TX = 1, on_RX_TX = 2, None = 3 };
 
-    RF_app(NRF24L01 *device, RF_app::RFAppMode rf_mode = RFAppMode::TX,
-           uint16_t frequency = 2402, uint8_t *Tx_addr = NULL,
+    RF_app(NRF24L01 *device,
+           RF_app::RFAppInterrupt interrupt_mode = RFAppInterrupt::None,
+           RF_app::RFAppMode rf_mode = RFAppMode::TX,
+           uint16_t frequency = 2402,
+           uint8_t *Tx_addr = NULL,
            uint8_t packet_size = 32);
 
     // virtual ~RF_app();
 
-    void setup(RFAppMode rf_mode,RFAppInterrupt enable_interrupt,
+    void setup(RFAppMode rf_mode, RFAppInterrupt enable_interrupt,
                uint16_t frequency, uint8_t *Tx_addr, uint8_t packet_size);
 
     /**
