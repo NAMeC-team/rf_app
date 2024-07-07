@@ -60,16 +60,6 @@ class RF_app {
      */
     void get_rx_packet();
 
-    /**
-     * Assumes that TX mode has transmitted at least one packet
-     *
-     * Can be used as a TX_DS (Transmission Data Sent) callback,
-     * sets CE=0 to switch to Standby-1 mode,
-     * then sets PRIM_RX=1 and CE=1, and waits 130μs to
-     * get into RX mode. Maintains CE=1 when finished
-     */
-    void switch_to_rx(void);
-
 protected:
     void _process(void);
 

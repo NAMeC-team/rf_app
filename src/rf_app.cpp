@@ -100,14 +100,6 @@ void RF_app::print_setup() {
     printf("Status : 0x%02X\n", (int)_device->status_register());
 }
 
-void RF_app::switch_to_rx() {
-    if (_device->mode() == NRF24L01::OperationMode::RECEIVER) return;
-    _device->set_mode(NRF24L01::OperationMode::RECEIVER); // sets PRIM_RX=1
-    _device->set_com_ce(0); // switch to Standby-I
-    wait_us(20);
-    _device->set_com_ce(1); // switch to RX Settling then RX Mode
-}
-
 /*__________________________
 
          Callback
