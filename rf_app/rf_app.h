@@ -61,7 +61,11 @@ class RF_app {
     void get_rx_packet();
 
 protected:
-    void _process(void);
+    /**
+     * Called by the attached _rf_callback
+     * Only used to defer function calls to the event queue
+     */
+    void _rf_callback_process(void);
 
     /**
      * Callback function directly attached to the underlying

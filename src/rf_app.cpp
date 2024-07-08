@@ -114,10 +114,15 @@ void RF_app::attach_tx_ds_callback(
     _tx_ds_callback = tx_ds_callback;
 }
 
-void RF_app::_rf_callback(void) {
+void RF_app::_rf_callback_process() {
     if (_device->mode() == NRF24L01::OperationMode::RECEIVER)
         _event_queue.call(callback(this, &RF_app::get_rx_packet));
     else {
         _event_queue.call(_tx_ds_callback);
     }
+}
+
+void RF_app::_rf_callback(void) {
+    // necessary to defer the operations on the event queue
+    _event_queue.call(callback(this, &RF_app::_rf_callback_process));
 }
