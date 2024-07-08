@@ -115,11 +115,14 @@ void RF_app::attach_tx_ds_callback(
 }
 
 void RF_app::_rf_callback_process() {
-    if (_device->mode() == NRF24L01::OperationMode::RECEIVER)
-        _event_queue.call(callback(this, &RF_app::get_rx_packet));
-    else {
-        _event_queue.call(_tx_ds_callback);
-    }
+    uint8_t reg_status = _device->spi_read_register(NRF24L01::RegisterAddress::REG_STATUS);
+    uint8_t rx_dr = reg_status & static_cast<uint8_t>(NRF24L01::RegisterAddress::REG_STATUS_RX_DR);
+    uint8_t tx_ds = reg_status & static_cast<uint8_t>(NRF24L01::RegisterAddress::REG_STATUS_TX_DS);
+
+    if (rx_dr)
+        get_rx_packet(); // calls the subsequent rx_callback attached
+    else if (tx_ds && _tx_ds_callback)
+        _tx_ds_callback();
 }
 
 void RF_app::_rf_callback(void) {
