@@ -31,6 +31,9 @@ void RF_app::setup(RFAppMode rf_mode,
     else if (interrupt_mode == RFAppInterrupt::on_RX_TX)
         interrupts = NRF24L01::InterruptMode::RX_TX;
 
+    // clear interrupt flags to ensure antenna is in a valid state
+    _device->clear_interrupt_flags();
+
     switch (rf_mode) {
         case RFAppMode::RX:
             _device->initialize(NRF24L01::OperationMode::RECEIVER,
