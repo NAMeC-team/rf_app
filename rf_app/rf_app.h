@@ -38,13 +38,14 @@ class RF_app {
 
     void get_rx_packet();
 
+    NRF24L01 *_device;
+
    protected:
     void _process(void);
 
     void _rf_callback(void);
 
    private:
-    NRF24L01 *_device;
     Thread _thread;
     EventQueue _event_queue;
     Callback<void(uint8_t *packet, size_t length)> _rx_callback;
